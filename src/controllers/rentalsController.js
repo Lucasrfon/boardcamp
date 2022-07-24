@@ -19,3 +19,27 @@ export async function postRental(req, res) {
         res.status(500).send(error);
     }
 }
+
+export async function getRentals(req, res) {
+    try {
+        const customerId = req.params.customerId;
+        const gameId = req.params.gameId;
+        const {rows: rentals} = await connection.query(`
+        SELECT rentals.*, customers.name AS customer, games.*, categories.name as "categoryName"
+        FROM rentals
+        JOIN customers ON customers.id = rentals."customerId"
+        JOIN games ON games.id = rentals."gameId"
+        JOIN categories ON games."categoryId" = categories.id
+        ${customerId && !gameId ? `WHERE rentals."customerId" = ${customerId}` : ''}
+        ${gameId && !customerId ? `WHERE rentals."gameId" = ${gameId}` : ''}
+        ${gameId && customerId ? `WHERE rentals."gameId" = ${gameId} AND rentals."customerId" = ${customerId}` : ''}
+        `);
+        const formatRentals = rentals;
+        formatRentals.forEach(each => 
+            delete each.image & delete each.stockTotal & delete each.pricePerDay
+            );
+        res.status(200).send(formatRentals);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}

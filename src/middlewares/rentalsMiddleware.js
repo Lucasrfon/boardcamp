@@ -21,5 +21,9 @@ export async function validateRental(req, res, next) {
 }
 
 export async function validateStock (req, res, next) {
-    console.log('implementar!')
+    try {
+        console.log('implementar!')
+    } catch (error) {
+        res.status(500).send(error);
+    }
 }

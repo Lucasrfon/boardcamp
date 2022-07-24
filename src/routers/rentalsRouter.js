@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { postRental } from "../controllers/rentalsController.js";
-import { validateRental } from "../middlewares/rentalsMiddleware.js";
+import { getRentals, postRental } from "../controllers/rentalsController.js";
+import { validateRental, validateStock } from "../middlewares/rentalsMiddleware.js";
 
 const router = Router();
 
-router.get('/rentals');
-router.post('/rentals', validateRental, postRental);
+router.get('/rentals', getRentals);
+router.post('/rentals', validateRental, validateStock, postRental);
 
 export default router;
