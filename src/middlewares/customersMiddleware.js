@@ -1,7 +1,7 @@
 import joi from "joi";
 import { connection } from "../dbStrategy/database.js";
 
-export async function validateCustomer(req, res, next) {
+export function validateCustomer(req, res, next) {
     const customerSchema = joi.object({
         name: joi.string().required(),
         phone: joi.string().pattern(/^[0-9]{10,11}$/).required(),
