@@ -13,7 +13,7 @@ export async function getCustomers(req, res) {
     }
 }
 
-export async function postCustomers(req, res) {
+export async function postCustomer(req, res) {
     try {
         const {name, phone, cpf, birthday} = req.body;
         await connection.query(`
