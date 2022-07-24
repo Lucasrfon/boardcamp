@@ -22,10 +22,10 @@ export async function postRental(req, res) {
 
 export async function getRentals(req, res) {
     try {
-        const customerId = req.params.customerId;
-        const gameId = req.params.gameId;
+        const customerId = req.query.customerId;
+        const gameId = req.query.gameId;
         const {rows: rentals} = await connection.query(`
-        SELECT rentals.*, customers.name AS customer, games.*, categories.name as "categoryName"
+        SELECT rentals.*, customers.name AS customer, games.name, games."categoryId", categories.name as "categoryName"
         FROM rentals
         JOIN customers ON customers.id = rentals."customerId"
         JOIN games ON games.id = rentals."gameId"
@@ -39,6 +39,16 @@ export async function getRentals(req, res) {
             delete each.image & delete each.stockTotal & delete each.pricePerDay
             );
         res.status(200).send(formatRentals);
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
+
+export async function removeRental(req, res) {
+    try {
+        const id = req.params.id;
+        await connection.query(`DELETE FROM rentals WHERE id = ${id}`);
+        res.status(200).send();
     } catch (error) {
         res.status(500).send(error);
     }

@@ -20,10 +20,22 @@ export async function validateRental(req, res, next) {
     next();
 }
 
-export async function validateStock (req, res, next) {
-    try {
-        console.log('implementar!')
-    } catch (error) {
-        res.status(500).send(error);
+export async function validateStock(req, res, next) {
+    console.log('implementar!')
+    next();
+}
+
+export async function validateRemoveRental(req, res, next) {
+    const id = req.params.id;
+    const {rows: rental} = await connection.query(`SELECT * FROM rentals WHERE id = ${id}`);
+    
+    if(rental.length !== 1) {
+        return res.status(404).send()
     }
+
+    if(!rental.returnDate) {
+        return res.status(400).send()
+    }
+
+    next();
 }
