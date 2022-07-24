@@ -28,3 +28,14 @@ export async function validateUniqueCpf(req, res, next) {
 
     next();
 }
+
+export async function validateIdCustomer(req, res, next) {
+    const id = req.params.id;
+    const { rows: findId } = await connection.query(`SELECT * FROM customers WHERE id = '${id}'`);
+
+    if(findId.length !== 1) {
+        return res.status(404).send('Não foi possível localizar esse cliente.')
+    }
+
+    next();
+}
