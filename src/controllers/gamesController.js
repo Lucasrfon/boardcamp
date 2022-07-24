@@ -2,7 +2,14 @@ import {connection} from '../dbStrategy/database.js';
 
 export async function getGames(req, res) {
     try {
-        const { rows: games} = await connection.query('SELECT * FROM games');
+        const name = req.query.name;
+        const { rows: games} = await connection.query(`
+        SELECT games.*, categories.name AS "categoryName"
+        FROM games
+        JOIN categories
+        ON games."categoryId" = categories.id
+        ${name ? `WHERE LOWER(games.name) LIKE LOWER('${name}%')` : ''}
+        `);
         res.status(200).send(games);
     } catch (error) {
         res.status(500).send(error);
