@@ -11,11 +11,12 @@ export async function validateGame(req, res, next) {
     });
     const game = req.body;
     const validation = gameSchema.validate(game);
-    const { rows: findCategory} = await connection.query(`SELECT * FROM categories WHERE id = ${game.categoryId}`)
     
     if(validation.error) {
         return res.status(400).send(validation.error.details[0].message)
     }
+
+    const { rows: findCategory} = await connection.query(`SELECT * FROM categories WHERE id = ${game.categoryId}`)
     
     if(findCategory.length !== 1) {
         return res.status(400).send('Categoria não existe')
@@ -26,7 +27,7 @@ export async function validateGame(req, res, next) {
 
 export async function validateUniqueGame(req, res, next) {
     const { name } = req.body;
-    const { rows: uniqueName } = await connection.query(`SELECT * FROM games WHERE name = '${name}'`);
+    const { rows: uniqueName } = await connection.query(`SELECT * FROM games WHERE LOWER(name) = LOWER('${name}')`);
 
     if(uniqueName.length > 0) {
         return res.status(409).send('Jogo já cadastrado.')
