@@ -99,3 +99,17 @@ export async function removeRental(req, res) {
         res.status(500).send(error);
     }
 }
+
+export async function caculateMetrics(req, res) {
+    try {
+        const {rows: rentals} = await connection.query(`SELECT COUNT(id) FROM rentals WHERE "returnDate" IS NOT NULL`);
+        const {rows: revenueOriginal} = await connection.query(`SELECT SUM("originalPrice") FROM rentals WHERE "returnDate" IS NOT NULL`);
+        const {rows: revenueDelayFee} = await connection.query(`SELECT SUM("delayFee") FROM rentals WHERE "returnDate" IS NOT NULL`);
+        const revenue = (revenueOriginal[0].sum + revenueDelayFee[0].sum);
+        const average = rentals[0].count === 0 ? 0 : revenue / rentals[0].count;
+
+        res.status(200).send({revenue, rentals: rentals[0].count, average})
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
