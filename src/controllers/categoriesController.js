@@ -2,7 +2,13 @@ import {connection} from '../dbStrategy/database.js';
 
 export async function getCategories(req, res) {
     try {
-        const { rows: categories} = await connection.query('SELECT * FROM categories');
+        const offset = req.query.offset;
+        const limit = req.query.limit;
+        const { rows: categories} = await connection.query(`
+        SELECT * FROM categories
+        ${limit ? `LIMIT ${limit}` : ''}
+        ${offset ? `OFFSET ${offset}` : ''}
+        `);
         res.status(200).send(categories);
     } catch (error) {
         res.status(500).send(error);

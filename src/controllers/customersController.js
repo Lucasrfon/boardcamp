@@ -2,6 +2,8 @@ import {connection} from '../dbStrategy/database.js';
 
 export async function getCustomers(req, res) {
     try {
+        const offset = req.query.offset;
+        const limit = req.query.limit;
         const id = req.params.id;
         const cpf = req.query.cpf;
 
@@ -10,6 +12,8 @@ export async function getCustomers(req, res) {
         ${cpf && !id ? `WHERE cpf LIKE '${cpf}%'` : ''}
         ${id && !cpf ? `WHERE id = ${id}` : ''}
         ${id && cpf ? `WHERE id = ${id} AND cpf LIKE '${cpf}%'` : ''}
+        ${limit ? `LIMIT ${limit}` : ''}
+        ${offset ? `OFFSET ${offset}` : ''}
         `);
 
         res.status(200).send(customers);

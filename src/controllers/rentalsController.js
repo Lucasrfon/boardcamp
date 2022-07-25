@@ -22,6 +22,8 @@ export async function postRental(req, res) {
 
 export async function getRentals(req, res) {
     try {
+        const offset = req.query.offset;
+        const limit = req.query.limit;
         const customerId = req.query.customerId;
         const gameId = req.query.gameId;
         const {rows: rentals} = await connection.query(`
@@ -33,6 +35,8 @@ export async function getRentals(req, res) {
         ${customerId && !gameId ? `WHERE rentals."customerId" = ${customerId}` : ''}
         ${gameId && !customerId ? `WHERE rentals."gameId" = ${gameId}` : ''}
         ${gameId && customerId ? `WHERE rentals."gameId" = ${gameId} AND rentals."customerId" = ${customerId}` : ''}
+        ${limit ? `LIMIT ${limit}` : ''}
+        ${offset ? `OFFSET ${offset}` : ''}
         `);
         const formatRentals = rentals;
         formatRentals.forEach(each => 
