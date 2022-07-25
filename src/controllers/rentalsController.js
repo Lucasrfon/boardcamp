@@ -42,13 +42,31 @@ export async function getRentals(req, res) {
         ${limit ? `LIMIT ${limit}` : ''}
         ${offset ? `OFFSET ${offset}` : ''}
         `);
-        const formatRentals = rentals;
-        formatRentals.forEach(each => 
-            delete each.image & delete each.stockTotal & delete each.pricePerDay
+        const formatRentals = rentals.map(format);
+        formatRentals.map(each => 
+            delete each.image & 
+            delete each.stockTotal & 
+            delete each.pricePerDay &
+            delete each.name &
+            delete each.categoryId &
+            delete each.categoryName
             );
         res.status(200).send(formatRentals);
     } catch (error) {
         res.status(500).send(error);
+    }
+}
+
+function format(rental) {
+    return {
+        ...rental, 
+        customer: {id: rental.customerId, name: rental.customer},
+        game: {
+            id: rental.gameId, 
+            name: rental.name, 
+            categoryId: rental.categoryId, 
+            categoryName: rental.categoryName
+        }
     }
 }
 
