@@ -18,7 +18,7 @@ export function validateCategory(req, res, next) {
 export async function validateUniqueName(req, res, next) {
     try {
         const { name } = req.body;
-        const { rows: uniqueName } = await connection.query(`SELECT * FROM categories WHERE name = '${name}'`);
+        const { rows: uniqueName } = await connection.query(`SELECT * FROM categories WHERE LOWER(name) = LOWER('${name}')`);
     
         if(uniqueName.length > 0) {
             return res.status(409).send('Categoria já cadastrada.')
