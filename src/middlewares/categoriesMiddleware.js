@@ -16,12 +16,17 @@ export function validateCategory(req, res, next) {
 }
 
 export async function validateUniqueName(req, res, next) {
-    const { name } = req.body;
-    const { rows: uniqueName } = await connection.query(`SELECT * FROM categories WHERE name = '${name}'`);
-
-    if(uniqueName.length > 0) {
-        return res.status(409).send('Categoria já cadastrada.')
+    try {
+        const { name } = req.body;
+        const { rows: uniqueName } = await connection.query(`SELECT * FROM categories WHERE name = '${name}'`);
+    
+        if(uniqueName.length > 0) {
+            return res.status(409).send('Categoria já cadastrada.')
+        }
+    
+        next();
+        
+    } catch (error) {
+        res.status(500).send(error);
     }
-
-    next();
 }

@@ -19,27 +19,37 @@ export function validateCustomer(req, res, next) {
 }
 
 export async function validateUniqueCpf(req, res, next) {
-    const id = req.params.id;
-    const { cpf } = req.body;
-    const { rows: uniqueCpf } = await connection.query(`
-    SELECT * FROM customers WHERE cpf = '${cpf}'
-    ${id ? `AND NOT id = ${id}` : ''}
-    `);
-
-    if(uniqueCpf.length > 0) {
-        return res.status(409).send('Não foi possível cadastrar esse cliente.')
+    try {
+        const id = req.params.id;
+        const { cpf } = req.body;
+        const { rows: uniqueCpf } = await connection.query(`
+        SELECT * FROM customers WHERE cpf = '${cpf}'
+        ${id ? `AND NOT id = ${id}` : ''}
+        `);
+    
+        if(uniqueCpf.length > 0) {
+            return res.status(409).send('Não foi possível cadastrar esse cliente.')
+        }
+    
+        next();
+        
+    } catch (error) {
+        res.status(500).send(error);
     }
-
-    next();
 }
 
 export async function validateIdCustomer(req, res, next) {
-    const id = req.params.id;
-    const { rows: findId } = await connection.query(`SELECT * FROM customers WHERE id = '${id}'`);
-
-    if(findId.length !== 1) {
-        return res.status(404).send('Não foi possível localizar esse cliente.')
+    try {
+        const id = req.params.id;
+        const { rows: findId } = await connection.query(`SELECT * FROM customers WHERE id = '${id}'`);
+    
+        if(findId.length !== 1) {
+            return res.status(404).send('Não foi possível localizar esse cliente.')
+        }
+    
+        next();
+        
+    } catch (error) {
+        res.status(500).send(error);
     }
-
-    next();
 }
