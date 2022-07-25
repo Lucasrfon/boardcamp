@@ -7,7 +7,7 @@ const router = Router();
 router.get('/customers', getCustomers);
 router.get('/customers/:id', validateIdCustomer, getCustomers);
 
-router.put('/customers/:id', validateCustomer, validateUniqueCpf, updateCustomer);
+router.put('/customers/:id', validateIdCustomer, validateCustomer, validateUniqueCpf, updateCustomer);
 
 router.post('/customers', validateCustomer, validateUniqueCpf, postCustomer);
 

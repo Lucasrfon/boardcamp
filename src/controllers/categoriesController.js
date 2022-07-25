@@ -2,10 +2,14 @@ import {connection} from '../dbStrategy/database.js';
 
 export async function getCategories(req, res) {
     try {
+        const desc = req.query.desc;
+        const order = req.query.order;
         const offset = req.query.offset;
         const limit = req.query.limit;
         const { rows: categories} = await connection.query(`
         SELECT * FROM categories
+        ${order && !desc ? `ORDER BY ${order}` : ''}
+        ${order && desc ? `ORDER BY ${order} DESC` : ''}
         ${limit ? `LIMIT ${limit}` : ''}
         ${offset ? `OFFSET ${offset}` : ''}
         `);

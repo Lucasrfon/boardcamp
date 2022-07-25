@@ -2,6 +2,8 @@ import {connection} from '../dbStrategy/database.js';
 
 export async function getGames(req, res) {
     try {
+        const desc = req.query.desc;
+        const order = req.query.order;
         const offset = req.query.offset;
         const limit = req.query.limit;
         const name = req.query.name;
@@ -11,6 +13,8 @@ export async function getGames(req, res) {
         JOIN categories
         ON games."categoryId" = categories.id
         ${name ? `WHERE LOWER(games.name) LIKE LOWER('${name}%')` : ''}
+        ${order && !desc ? `ORDER BY ${order}` : ''}
+        ${order && desc ? `ORDER BY ${order} DESC` : ''}
         ${limit ? `LIMIT ${limit}` : ''}
         ${offset ? `OFFSET ${offset}` : ''}
         `);
