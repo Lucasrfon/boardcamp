@@ -72,8 +72,8 @@ export async function validateRemoveRental(req, res, next) {
         return res.status(404).send()
     }
 
-    if(!rental.returnDate) {
-        return res.status(400).send()
+    if(!rental[0].returnDate) {
+        return res.status(400).send('aqui')
     }
 
     next();
