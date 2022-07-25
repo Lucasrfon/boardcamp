@@ -30,6 +30,10 @@ export async function validateStock(req, res, next) {
         WHERE rentals."returnDate" IS NULL
         AND games.id = ${gameId}
         `)
+
+        if(stock.length === 0) {
+            return next();
+        }
     
         if(stock.length === stock[0].stockTotal) {
             return res.status(400).send()
