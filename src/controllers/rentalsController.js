@@ -57,7 +57,7 @@ export async function returnRental(req, res) {
         UPDATE rentals 
         SET "returnDate" = '${returnDate}', "delayFee" = '${delayFee}' 
         WHERE id = ${id}
-        `)
+        `);
         res.status(200).send();
     } catch (error) {
         res.status(500).send(error);

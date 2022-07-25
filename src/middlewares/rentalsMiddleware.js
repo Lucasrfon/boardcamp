@@ -21,8 +21,43 @@ export async function validateRental(req, res, next) {
 }
 
 export async function validateStock(req, res, next) {
-    console.log('implementar!')
-    next();
+    try {
+        const { gameId } = req.body;
+        const { rows: stock } = await connection.query(`
+        SELECT games."stockTotal"
+        FROM rentals
+        JOIN games ON rentals."gameId" = games.id
+        WHERE rentals."returnDate" IS NULL
+        AND games.id = ${gameId}
+        `)
+    
+        if(stock.length === stock[0].stockTotal) {
+            return res.status(400).send()
+        }
+
+        next();
+    } catch (error) {
+        res.status(500).send('error');
+    }
+}
+
+export async function validateReturnRental(req, res, next) {
+    try {
+        const id = req.params.id;
+        const { rows: findRental } = await connection.query(`SELECT * FROM rentals WHERE id = ${id}`);
+
+        if(findRental.length !== 1) {
+            return res.status(404).send()
+        }
+
+        if(findRental[0].returnDate) {
+            return res.status(400).send()
+        }
+
+        next();
+    } catch (error) {
+        res.status(500).send('error');
+    }
 }
 
 export async function validateRemoveRental(req, res, next) {
